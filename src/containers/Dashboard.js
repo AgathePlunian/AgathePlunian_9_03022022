@@ -12,7 +12,7 @@ export const filteredBills = (data, status) => {
 
       // in jest environment
       if (typeof jest !== 'undefined') {
-        selectCondition = (bill.status === status)
+        selectCondition = (bill.status === status)   
       }
       /* istanbul ignore next */
       else {
@@ -41,7 +41,7 @@ export const card = (bill) => {
         <span class='bill-card-grey'> ... </span>
       </div>
       <div class='name-price-container'>
-        <span> ${bill.name} </span>
+        <span> ${bill.name}</span>
         <span> ${bill.amount} € </span>
       </div>
       <div class='date-type-container'>
@@ -83,28 +83,34 @@ export default class {
     const imgWidth = Math.floor($('#modaleFileAdmin1').width() * 0.8)
     $('#modaleFileAdmin1').find(".modal-body").html(`<div style='text-align: center;'><img width=${imgWidth} src=${billUrl} alt="Bill"/></div>`)
     if (typeof $('#modaleFileAdmin1').modal === 'function') $('#modaleFileAdmin1').modal('show')
-  }
+  } 
 
-  handleEditTicket(e, bill, bills) {
-    if (this.counter === undefined || this.id !== bill.id) this.counter = 0
-    if (this.id === undefined || this.id !== bill.id) this.id = bill.id
+  handleEditTicket(e, bill, bills) {  
+    console.log(e)
+    //selected
+    if (this.counter === undefined || this.id !== bill.id) this.counter = 0 //initialisation du compteur à 0
+    if (this.id === undefined || this.id !== bill.id) this.id = bill.id //on initialise bill.id à l'id du bill cliqué
     if (this.counter % 2 === 0) {
+      
       bills.forEach(b => {
-        $(`#open-bill${b.id}`).css({ background: '#0D5AE5' })
+        $(`#open-bill${b.id}`).css({ background: '#0D5AE5' })//none selected
       })
-      $(`#open-bill${bill.id}`).css({ background: '#2A2B35' })
+      $(`#open-bill${bill.id}`).css({ background: '#2A2B35' })//selected
       $('.dashboard-right-container div').html(DashboardFormUI(bill))
       $('.vertical-navbar').css({ height: '150vh' })
       this.counter ++
-    } else {
-      $(`#open-bill${bill.id}`).css({ background: '#0D5AE5' })
+     }  else {
+     
+      $(`#open-bill${bill.id}`).css({ background: '#0D5AE5' })//none selected
 
       $('.dashboard-right-container div').html(`
         <div id="big-billed-icon" data-testid="big-billed-icon"> ${BigBilledIcon} </div>
       `)
       $('.vertical-navbar').css({ height: '120vh' })
-      this.counter ++
-    }
+     
+      this.counter ++ 
+    }  
+    console.log("/////////////")
     $('#icon-eye-d').click(this.handleClickIconEye)
     $('#btn-accept-bill').click((e) => this.handleAcceptSubmit(e, bill))
     $('#btn-refuse-bill').click((e) => this.handleRefuseSubmit(e, bill))
@@ -131,25 +137,33 @@ export default class {
   }
 
   handleShowTickets(e, bills, index) {
-    if (this.counter === undefined || this.index !== index) this.counter = 0
-    if (this.index === undefined || this.index !== index) this.index = index
-    if (this.counter % 2 === 0) {
+  
+    console.log(bills)
+    this.index = index;
+    if (!$(`#arrow-icon${this.index}`).hasClass('expanded')) {
+      $(`#arrow-icon${this.index}`).addClass('expanded')
       $(`#arrow-icon${this.index}`).css({ transform: 'rotate(0deg)'})
       $(`#status-bills-container${this.index}`)
         .html(cards(filteredBills(bills, getStatus(this.index))))
-      this.counter ++
+     
     } else {
+      $(`#arrow-icon${this.index}`).removeClass('expanded')
       $(`#arrow-icon${this.index}`).css({ transform: 'rotate(90deg)'})
       $(`#status-bills-container${this.index}`)
         .html("")
-      this.counter ++
     }
 
+    //ADD EVENT LISTENER ONLY ON TIME
     bills.forEach(bill => {
-      $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
+      if(!$(`#open-bill${bill.id}`).attr('hasEventListener')) {
+        $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
+        $(`#open-bill${bill.id}`).attr( "hasEventListener", true )
+      }
     })
 
-    return bills
+
+    
+   return bills
 
   }
 

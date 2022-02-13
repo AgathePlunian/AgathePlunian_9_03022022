@@ -42,6 +42,7 @@ class ApiEntity {
     return await (this.api.get({url: `/${this.key}`, headers: getHeaders(headers)}))
   }
   async update({data, selector, headers = {}}) {
+    //console.log(data)
     return await (this.api.patch({url: `/${this.key}/${selector}`, headers: getHeaders(headers), data}))
   }
   async create({data, headers = {}}) {
