@@ -7,7 +7,6 @@ export default class {
     this.document = document
     this.onNavigate = onNavigate
     this.store = store
-    console.log(localStorage)
     const buttonNewBill = document.querySelector(`button[data-testid="btn-new-bill"]`)
     if (buttonNewBill) buttonNewBill.addEventListener('click', this.handleClickNewBill)
     const iconEye = document.querySelectorAll(`div[data-testid="icon-eye"]`)
@@ -28,13 +27,14 @@ export default class {
     $('#modaleFile').find(".modal-body").html(`<div style='text-align: center;' class="bill-proof-container"><img width=${imgWidth} src=${billUrl} alt="Bill" /></div>`)
     $('#modaleFile').modal('show')
   }
-
-  
+ 
+      /* istanbul ignore next */ 
   getBills = () => {
     if (this.store) {
       return this.store
       .bills()
       .list()
+  
       .then(snapshot => {
         const bills = snapshot
           .map(doc => {

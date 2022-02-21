@@ -27,7 +27,9 @@ export default class NewBill {
     const email = JSON.parse(localStorage.getItem('user')).email
     formData.append('file', file)
     formData.append('email', email)
-    if (fileExtension.match(/^(jpeg|jpg|png)$/)) {
+    const formats = ["jpg", "jpeg", "png"];
+
+    if (formats.includes(fileExtension)) {
       this.store
         .bills()
         .create({
@@ -73,6 +75,7 @@ export default class NewBill {
     this.onNavigate(ROUTES_PATH['Bills'])
   }
 
+  /* istanbul ignore next */ 
   // not need to cover this function by tests
   updateBill = (bill) => {
     console.log(bill)
