@@ -52,63 +52,79 @@ describe("Given I am connected as an employee", () => {
           expect(screen.getByTestId("file")).toBeTruthy();
           expect(screen.getByRole("button")).toBeTruthy();
       })
-
+   
       
       test('Then I can select upload an image file', () => {   
-             
-         window.localStorage.setItem('user', JSON.stringify({ type: 'Employee' }))
+         // Build DOM for new bill page
+         const html = NewBillUI();
+         document.body.innerHTML = html;
+
+         // Mock function handleChangeFile()
+         const store = null;
          const onNavigate = (pathname) => {
-            document.body.innerHTML = ROUTES({ pathname })
-         }
-         const html = NewBillUI()
-         document.body.innerHTML = html
+         document.body.innerHTML = pathname;
+         };
          const newBill = new NewBill({
-            document,
-            onNavigate,
-            store: null,
-            localStorage: window.localStorage,
-         })
-        
-         const handleChangeFile = jest.fn((e) => newBill.handleChangeFile(e))
-         const selectFile = screen.getByTestId('file')
-         const testFile = new File(['AcceptedFile'], 'acceptedFile.jpg', {
-            type: 'image/jpeg',
-         })
-   
-         selectFile.addEventListener('change', handleChangeFile)
-         fireEvent.change(selectFile, { target: { files: [testFile] } })
-   
-         expect(handleChangeFile).toHaveBeenCalled()
-         expect(selectFile.files[0]).toStrictEqual(testFile)
+         document,
+         onNavigate,
+         store,
+         bills,
+         localStorage: window.localStorage,
+         });
+         const  mockHandleChangeFile= jest.fn((e) => newBill.handleChangeFile(e))
+         const inputJustificative = screen.getByTestId("file");
+         expect(inputJustificative).toBeTruthy();
+
+         // Simulate if the file is an jpg extension
+         inputJustificative.addEventListener("change", mockHandleChangeFile);
+         fireEvent.change(inputJustificative, {
+            target: {
+               files: [new File(["file.jpg"], "file.jpg", { type: "file/jpg" })],
+            },
+         });
+
+         expect(mockHandleChangeFile).toHaveBeenCalled();
+         expect(inputJustificative.files[0].name).toBe("file.jpg");
+
+         jest.spyOn(window, "alert").mockImplementation(() => {});
+         expect(window.alert).not.toHaveBeenCalled();
       })
 
       test("Then I can't select upload a non image file", () => {
-          //MOCK WINDOW'S ALERT   
-         window.alert = jest.fn()
-         
-         window.localStorage.setItem('user', JSON.stringify({ type: 'Employee' }))
+          // Build DOM for new bill page
+         const html = NewBillUI();
+         document.body.innerHTML = html;
+
+         // Mock function handleChangeFile()
+         const store = null;
          const onNavigate = (pathname) => {
-           document.body.innerHTML = ROUTES({ pathname })
-         }
-         const html = NewBillUI()
-         document.body.innerHTML = html
+         document.body.innerHTML = pathname;
+         };
          const newBill = new NewBill({
-           document,
-           onNavigate,
-           store: null,
-           localStorage: window.localStorage,
-         })
-         const handleChangeFile = jest.fn((e) => newBill.handleChangeFile(e))
-         const selectFile = screen.getByTestId('file')
-         const testFile = new File(['Wrong file'], 'wrongFile.pdf', {
-           type: 'application/pdf',
-         })
-   
-         selectFile.addEventListener('change', handleChangeFile)
-         fireEvent.change(selectFile, { target: { files: [testFile] } })
-   
-         expect(handleChangeFile).toHaveBeenCalled()
-         expect(window.alert).toHaveBeenCalled()
+         document,
+         onNavigate,
+         store,
+         bills,
+         localStorage: window.localStorage,
+         });
+
+         const mockHandleChangeFile = jest.fn(newBill.handleChangeFile);
+
+         const inputJustificative = screen.getByTestId("file");
+         expect(inputJustificative).toBeTruthy();
+
+         // Simulate if the file is wrong format and is not an jpg, png or jpeg extension
+         inputJustificative.addEventListener("change", mockHandleChangeFile);
+         fireEvent.change(inputJustificative, {
+         target: {
+            files: [new File(["file.pdf"], "file.pdf", { type: "file/pdf" })],
+         },
+         });
+         expect(mockHandleChangeFile).toHaveBeenCalled();
+         expect(inputJustificative.files[0].name).not.toBe("file.jpg");
+
+         jest.spyOn(window, "alert").mockImplementation(() => {});
+         expect(window.alert).toHaveBeenCalled();
       })
    })
 })
@@ -170,9 +186,7 @@ describe('Given I am a user connected as Employee', () => {
 
          const form = screen.getByTestId("form-new-bill");
          form.addEventListener("submit", handleSubmit);
-         expect(screen.getByText('Envoyer').type).toBe('submit')
-
-         userEvent.click(screen.getByText("Envoyer"))
+         fireEvent.submit(form)
 
          expect(handleSubmit).toHaveBeenCalled()
          expect(newBill.updateBill).toHaveBeenCalled()

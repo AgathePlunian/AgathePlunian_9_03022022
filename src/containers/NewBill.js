@@ -19,6 +19,7 @@ export default class NewBill {
 
   handleChangeFile = (e) => {
     e.preventDefault()
+    const inputFileElement=this.document.querySelector(`input[data-testid="file"]`)
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length - 1]
@@ -30,7 +31,19 @@ export default class NewBill {
     const formats = ["jpg", "jpeg", "png"];
 
     if (formats.includes(fileExtension)) {
-      this.store
+
+      this.handleStore(formData, fileName);
+      
+    } 
+    else {
+      alert("Le format du fichier doit être en jpg, png ou jpeg");
+      inputFileElement.value = "";
+       
+    }
+  }
+
+  handleStore(formData, fileName) {
+    this.store
         .bills()
         .create({
           data: formData,
@@ -44,13 +57,6 @@ export default class NewBill {
           this.fileName = fileName
         })
         .catch((error) => console.error(error))
-    } 
-    else {
-        alert(
-          `Votre fichier doit être au format jpg, jpeg ou png.`
-        )
-        document.querySelector(`input[data-testid="file"]`).value = ''
-    }
   }
   
   handleSubmit = e => {
