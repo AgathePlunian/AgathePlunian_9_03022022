@@ -90,7 +90,8 @@ describe("Given I am connected as an employee", () => {
 
 
       const btnNewBill = screen.getByTestId("btn-new-bill");
-      //MOCK FUNCTION HANDLE CLICK NEW BILL
+      
+      //Mock fuction handle click
       const mockFunctionHandleClick = jest.fn(mockBills.handleClickNewBill);
 
       btnNewBill.addEventListener("click", mockFunctionHandleClick);
@@ -101,7 +102,6 @@ describe("Given I am connected as an employee", () => {
     });
   });
 
-  //TEST CLICK ON EYE ICON
   describe("When I click on first eye icon", () => {
     test("Then modal should open", () => {
 
@@ -124,10 +124,10 @@ describe("Given I am connected as an employee", () => {
           store: null,
       });
 
-        //MOCK THE MODAL
+        //Mock the modal
         $.fn.modal = jest.fn();
 
-        //MOCK THE HANFKE CLICK ICONE
+        //Mock the handleClickIconeEye
         const handleClickIconEye = jest.fn(() => {
             billsContainer.handleClickIconEye
         });
@@ -141,7 +141,6 @@ describe("Given I am connected as an employee", () => {
     });
   });
 })
-
 
 // Test d'integration GET
 describe('Given I am connected as an employee', () => {
@@ -205,4 +204,3 @@ describe('Given I am connected as an employee', () => {
     })
   })
 })
-

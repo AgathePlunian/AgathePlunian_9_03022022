@@ -36,7 +36,6 @@ describe("Given I am connected as an employee", () => {
       })
    })
    
-   //ON NEWBILL PAGE, THE FORM SHOULD BE LOADED
    describe("When I am on NewBill Page", () => {
       test("Then the new bill's form should be loaded with its fields", () => {
           const html = NewBillUI()
@@ -55,7 +54,6 @@ describe("Given I am connected as an employee", () => {
    
       
       test('Then I can select upload an image file', () => {   
-         // Build DOM for new bill page
          const html = NewBillUI();
          document.body.innerHTML = html;
 
@@ -91,7 +89,7 @@ describe("Given I am connected as an employee", () => {
       })
 
       test("Then I can't select upload a non image file", () => {
-          // Build DOM for new bill page
+   
          const html = NewBillUI();
          document.body.innerHTML = html;
 
@@ -129,8 +127,6 @@ describe("Given I am connected as an employee", () => {
    })
 })
 
-
- 
 //Test d'intégration POST
 describe('Given I am a user connected as Employee', () => {
    describe("When I submit the form completed", () => {
