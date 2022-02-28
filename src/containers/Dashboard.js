@@ -138,7 +138,6 @@ export default class {
 
   handleShowTickets(e, bills, index) {
   
-    console.log(bills)
     this.index = index;
     if (!$(`#arrow-icon${this.index}`).hasClass('expanded')) {
       $(`#arrow-icon${this.index}`).addClass('expanded')

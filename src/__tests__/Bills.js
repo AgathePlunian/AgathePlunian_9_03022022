@@ -59,7 +59,6 @@ describe("Given I am connected as an employee", () => {
   
   describe("When I am on Bills page, dates should be deplay from ealiest to latest", () => {
     test("Then, should return error",  () => {
-
       document.body.innerHTML = BillsUI({ data: bills });
       const dates = screen.getAllByText(/^([1-9]|[12][0-9]|3[01])[ ]\b.{3}\b[.][ ]\d{2}$/i).map(a => a.innerHTML);
       expect(dates).toEqual(['4 Avr. 04','3 Mar. 03','2 Fév. 02','1 Jan. 01'])
@@ -97,8 +96,7 @@ describe("Given I am connected as an employee", () => {
 })
 
 // Test d'integration GET
-describe('Given I am connected as an employee', () => {
-  
+describe('Given I am connected as an employee', () => {  
   describe('When I am on Bills Page', () => {
 
     test("fetches bills from mock API GET", async () => {
@@ -108,8 +106,7 @@ describe('Given I am connected as an employee', () => {
       document.body.append(root)
       router()
       
-      window.onNavigate(ROUTES_PATH.Bills)
-     
+      window.onNavigate(ROUTES_PATH.Bills)    
       expect(await waitFor(() => screen.getByText('Mes notes de frais'))).toBeTruthy()
  
     })

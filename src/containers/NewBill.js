@@ -32,12 +32,12 @@ export default class NewBill {
 
     if (formats.includes(fileExtension)) {
       this.handleStore(formData, fileName);
-      
-    } 
+    }
+
     else {
       alert("Le format du fichier doit être en jpg, png ou jpeg");
       inputFileElement.value = "";
-       
+   
     }
   }
 

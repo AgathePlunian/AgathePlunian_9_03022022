@@ -207,7 +207,9 @@ describe('Given I am a user connected as Employee', () => {
    
          mockStore.bills.mockImplementationOnce(() => {
            return {
-             update : jest.fn().mockRejectedValueOnce(false)
+            update : () =>  {
+               return Promise.reject(new Error('Erreur 500'))
+             }
            }
          })
          const newBill = new NewBill({document,  onNavigate, store: mockStore, localStorage: window.localStorage})
@@ -215,9 +217,7 @@ describe('Given I am a user connected as Employee', () => {
          // Submit form
          const form = screen.getByTestId('form-new-bill')
          const handleSubmit = jest.fn((e) => newBill.handleSubmit(e))
-         form.addEventListener('submit', handleSubmit)
-   
-         
+         form.addEventListener('submit', handleSubmit)     
          fireEvent.submit(form)
          await new Promise(process.nextTick)
          expect(console.error).toBeCalled()
