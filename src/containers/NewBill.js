@@ -31,7 +31,6 @@ export default class NewBill {
     const formats = ["jpg", "jpeg", "png"];
 
     if (formats.includes(fileExtension)) {
-
       this.handleStore(formData, fileName);
       
     } 

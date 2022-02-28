@@ -3,6 +3,7 @@
  */
 
 import '@testing-library/jest-dom'
+import userEvent from '@testing-library/user-event'
 import { fireEvent, waitFor, screen} from '@testing-library/dom'
 import BillsUI from "../views/BillsUI.js"
 import { bills } from "../fixtures/bills.js"
@@ -65,79 +66,32 @@ describe("Given I am connected as an employee", () => {
     })
   })
 
-  
-  describe("When I click on button 'Nouvelle note de frais'", () => {
-    test("Then I should be sent on the new bill page", () => {
-      
-      Object.defineProperty(window, 'localStorage', {
-        value: localStorageMock,
-      })
-      window.localStorage.setItem('user', JSON.stringify({ type: 'Employee' }))
-      
-      const html = BillsUI({ data: bills })
-      document.body.innerHTML = html
-      
-      const onNavigate = (pathname) => {
-        document.body.innerHTML = ROUTES({ pathname })
-      }
-    
-      const mockBills = new Bills({
-        document,
-        onNavigate,
-        localStorage: window.localStorage,
-        store: null,
-      });
-
-
-      const btnNewBill = screen.getByTestId("btn-new-bill");
-      
-      //Mock fuction handle click
-      const mockFunctionHandleClick = jest.fn(mockBills.handleClickNewBill);
-
-      btnNewBill.addEventListener("click", mockFunctionHandleClick);
-      fireEvent.click(btnNewBill);
-
-      expect(mockFunctionHandleClick).toHaveBeenCalled();
-     
-    });
-  });
-
   describe("When I click on first eye icon", () => {
     test("Then modal should open", () => {
-
-      Object.defineProperty(window, 'localStorage', {
-        value: localStorageMock,
-      })
-      window.localStorage.setItem('user', JSON.stringify({ type: 'Employee' }))
       
-      const html = BillsUI({ data: bills })
-      document.body.innerHTML = html
-      
+      $.fn.modal = jest.fn()// Prevent jQuery error
       const onNavigate = (pathname) => {
         document.body.innerHTML = ROUTES({ pathname })
       }
-       
+
+      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+      window.localStorage.setItem('user', JSON.stringify({ type: 'Employee' }))
+    
+      const html = BillsUI({ data: bills })
+      document.body.innerHTML = html
+
       const billsContainer = new Bills({
-          document,
-          onNavigate,
-          localStorage:localStorageMock,
-          store: null,
-      });
-
-        //Mock the modal
-        $.fn.modal = jest.fn();
-
-        //Mock the handleClickIconeEye
-        const handleClickIconEye = jest.fn(() => {
-            billsContainer.handleClickIconEye
-        });
-
-        const firstEyeIcon = screen.getAllByTestId("icon-eye")[0];
-        firstEyeIcon.addEventListener("click", handleClickIconEye);
-        fireEvent.click(firstEyeIcon)
-
-        expect(handleClickIconEye).toHaveBeenCalled();
-        expect($.fn.modal).toHaveBeenCalled();
+        document, onNavigate, store: mockStore, localStorage: window.localStorage
+      })
+  
+      const iconEye = screen.getAllByTestId('icon-eye')[0]
+      const handleShowModalFile = jest.fn((e) => { billsContainer.handleClickIconEye(e.target) })
+  
+      iconEye.addEventListener('click', handleShowModalFile)
+      userEvent.click(iconEye)
+  
+      expect(handleShowModalFile).toHaveBeenCalled()
+      expect(screen.getAllByText('Justificatif')).toBeTruthy()
     });
   });
 })

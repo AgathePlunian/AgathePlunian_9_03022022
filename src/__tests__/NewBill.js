@@ -69,6 +69,7 @@ describe("Given I am connected as an employee", () => {
          bills,
          localStorage: window.localStorage,
          });
+   
          const  mockHandleChangeFile= jest.fn((e) => newBill.handleChangeFile(e))
          const inputJustificative = screen.getByTestId("file");
          expect(inputJustificative).toBeTruthy();
@@ -188,55 +189,38 @@ describe('Given I am a user connected as Employee', () => {
          expect(newBill.updateBill).toHaveBeenCalled()
          
       })
-   })
-      
-      describe("When an error occurs on API", () => {
-         beforeEach(() => {
-           jest.spyOn(mockStore, "bills")
-           Object.defineProperty(
-               window,
-               'localStorage',
-               { value: localStorageMock }
-           )
 
-           window.localStorage.setItem('user', JSON.stringify({
-             type: 'Employee',
-             email: "a@a"
-           }))
-           const root = document.createElement("div")
-           root.setAttribute("id", "root")
-           document.body.appendChild(root)
-           router()
+      test('fetches error from an API and fails with 500 error', async () => {
+         jest.spyOn(mockStore, 'bills')
+         jest.spyOn(console, 'error').mockImplementation(() => {})// Prevent Console.error jest error
+   
+         Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+         Object.defineProperty(window, 'location', { value: { hash: ROUTES_PATH['NewBill'] } })
+   
+         window.localStorage.setItem('user', JSON.stringify({ type: 'Employee' }))
+         document.body.innerHTML = `<div id="root"></div>`
+         router()
+   
+         const onNavigate = (pathname) => {
+           document.body.innerHTML = ROUTES({ pathname })
+         }
+   
+         mockStore.bills.mockImplementationOnce(() => {
+           return {
+             update : jest.fn().mockRejectedValueOnce(false)
+           }
          })
+         const newBill = new NewBill({document,  onNavigate, store: mockStore, localStorage: window.localStorage})
+       
+         // Submit form
+         const form = screen.getByTestId('form-new-bill')
+         const handleSubmit = jest.fn((e) => newBill.handleSubmit(e))
+         form.addEventListener('submit', handleSubmit)
+   
          
-         test("fetches bills from an API and fails with 404 message error", async () => {
-     
-           mockStore.bills.mockImplementationOnce(() => {
-             return {
-               list : () =>  {
-                 return Promise.reject(new Error("Erreur 404"))
-               }
-             }})
-           window.onNavigate(ROUTES_PATH.Bills)
-           await new Promise(process.nextTick);
-           const message = await screen.getByText(/Erreur 404/)
-           expect(message).toBeTruthy()
-         })
-     
-         test("fetches messages from an API and fails with 500 message error", async () => {
-     
-           mockStore.bills.mockImplementationOnce(() => {
-             return {
-               list : () =>  {
-                 return Promise.reject(new Error("Erreur 500"))
-               }
-             }})
-     
-           window.onNavigate(ROUTES_PATH.Bills)
-           await new Promise(process.nextTick);
-           const message = await screen.getByText(/Erreur 500/)
-           expect(message).toBeTruthy()
-         })
+         fireEvent.submit(form)
+         await new Promise(process.nextTick)
+         expect(console.error).toBeCalled()
+       })
    })
-
 })

@@ -18,6 +18,7 @@ export default class {
 
   handleClickNewBill = () => {
     this.onNavigate(ROUTES_PATH['NewBill'])
+    console.log(this.onNavigate);
   }
 
   handleClickIconEye = (icon) => {
